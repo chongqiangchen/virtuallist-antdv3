@@ -120,7 +120,7 @@ function VRow(props): JSX.Element {
             {...restProps}
             ref={trRef}
             style={{
-                height: rowHeight && fixed ? rowHeight + 1 : rowHeight,
+                height: rowHeight,
                 boxSizing: 'border-box'
             }}
         >

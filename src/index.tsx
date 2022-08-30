@@ -62,10 +62,11 @@ function reducer(state, action) {
             }
 
         case 'reset':
+            const ifScrollTopClear = action.ifScrollTopClear;
             return {
                 ...state,
-                curScrollTop: 0,
-                scrollHeight: 0
+                curScrollTop: ifScrollTopClear ? 0 : state.curScrollTop,
+                scrollHeight: 0,
             }
         default:
             throw new Error()
@@ -135,15 +136,13 @@ function VWrapper(props): JSX.Element {
     const { renderLen, start, offsetStart } = useContext(ScrollContext)
 
     // console.log(`wrap fixed ${fixed}`)
-    // console.log(start, renderLen)
+    console.log(start, renderLen)
     let trs = []
     for (let i = 0; i < renderLen; i++) {
         if (children[start + i]) {
             trs.push(children[start + i])
         }
     }
-
-    // console.log(trs)
 
     return (
         <tbody
@@ -155,8 +154,9 @@ function VWrapper(props): JSX.Element {
     )
 }
 
-function VTable(props): JSX.Element {
+function VTable(props, otherParams): JSX.Element {
     const { style, children, ...rest } = props
+    const {resetTopWhenDataChange} = otherParams;
     const { width, ...rest_style } = style
 
     const [state, dispatch] = useReducer(reducer, initialState)
@@ -223,15 +223,18 @@ function VTable(props): JSX.Element {
     useEffect(() => {
         // totalLen变化, 那么搜索条件一定变化, 数据也一定变化.
         let parentNode: any = wrap_tableRef.current.parentNode
-        parentNode.scrollTop = 0
-        dispatch({ type: 'reset' })
-    }, [totalLen])
-
-    // console.log(totalLen, scrollY)
+        if (resetTopWhenDataChange) {
+            parentNode.scrollTop = 0
+            dispatch({ type: 'reset', ifScrollTopClear: true });
+        } else {
+            dispatch({ type: 'reset', ifScrollTopClear: false });
+        }
+    }, [totalLen, resetTopWhenDataChange])
 
     useEffect(() => {
         const throttleScroll = throttle(e => {
             let scrollTop = e?.target?.scrollTop ?? 0
+            console.log(scrollTop, state.curScrollTop);
             if (scrollTop !== state.curScrollTop) {
                 let scrollHeight = e.target.scrollHeight - tableScrollY
                 dispatch({
@@ -293,12 +296,14 @@ function VTable(props): JSX.Element {
 }
 
 // ================导出===================
-export function VList(): TableComponents {
+export function VList(props: {resetTopWhenDataChange: boolean} = {resetTopWhenDataChange: true}): TableComponents {
     // 初始化staticRowHeight
     staticRowHeight = 0
 
     return {
-        table: VTable,
+        table: (p) => VTable(p, {
+            resetTopWhenDataChange: props.resetTopWhenDataChange
+        }),
         body: {
             wrapper: VWrapper,
             row: VRow

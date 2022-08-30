@@ -1,7 +1,7 @@
 {
   "name": "virtuallist-antdv3",
-  "version": "0.2.8",
-  "description": "virtualList for antd-table, 实现antd-table的虚拟列表, antd-table无限滚动, infinite scrolling for antd-table",
+  "version": "0.2.8-beta.3",
+  "description": "fork virtuallist-antd v0.2.8, 实现表格虚拟列表",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
@@ -24,8 +24,8 @@
   "author": "crawler-django",
   "license": "ISC",
   "peerDependencies": {
-    "react": "^16.12.0",
-    "antd": "^3.26.0"
+    "antd": "^3.26.0",
+    "react": "^16.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
@@ -43,6 +43,7 @@
     "babel-preset-es2015": "^6.24.1",
     "css-loader": "^3.2.1",
     "lodash-es": "^4.17.15",
+    "rollup": "^2.76.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
